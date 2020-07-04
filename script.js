@@ -163,7 +163,6 @@ function assignBtnFinishedTodo() {
 				console.log(projectList[projectIndex].todosArray[j].status);
 				projectList[projectIndex].todosArray[j].status = true;
 				console.log(projectList[projectIndex].todosArray[j].status);
-				//projectList[projectIndex].todosArray.splice(j, 1);
 			}
 		}
 		render();
@@ -266,10 +265,24 @@ function editPriority() {
 }
 
 function editTodoBtnOk() {
+		while (btnTodoDisplay.firstChild) {
+		btnTodoDisplay.removeChild(btnTodoDisplay.firstChild);
+	}
+	var memory = [];
 	const btnOk = document.createElement("button");
 	btnOk.classList.add(
 		"bg-blue-500",
 		"hover:bg-blue-700",
+		"text-white",
+		"font-bold",
+		"py-2",
+		"px-4",
+		"rounded"
+	);
+	const btnCancelEdit = document.createElement("button");
+	btnCancelEdit.classList.add(
+		"bg-red-500",
+		"hover:bg-red-700",
 		"text-white",
 		"font-bold",
 		"py-2",
@@ -284,6 +297,8 @@ function editTodoBtnOk() {
 
 	btnOk.setAttribute = ("id", "editTodobtnOk");
 	btnOk.textContent = "Done!";
+
+	btnCancelEdit.textContent = "Cancel";
 	//Acomodar esto!!!!
 	let projectIndex = 0;
 	for (i = 0; i < projectList.length; i++) {
@@ -294,12 +309,15 @@ function editTodoBtnOk() {
 	for (let j = 0; j < projectList[projectIndex].todosArray.length; j++) {
 		if (projectList[projectIndex].todosArray[j].title === searchTitle) {
 			console.log(projectIndex);
-			console.log(projectList[projectIndex].todosArray[j]);
+			//console.log(projectList[projectIndex].todosArray[j]);
+			memory.push(projectList[projectIndex].todosArray[j]);
+			console.log(memory);
 			projectList[projectIndex].todosArray.splice(j, 1);
 		}
 	}
 
-	todoDisplay.appendChild(btnOk);
+	btnTodoDisplay.appendChild(btnOk);
+	btnTodoDisplay.appendChild(btnCancelEdit);
 	btnOk.addEventListener("click", function () {
 		let title = document.querySelector("#domEditTitle").value;
 		let description = document.querySelector("#domEditDescription").value;
@@ -310,6 +328,11 @@ function editTodoBtnOk() {
 		render();
 		cleanTodoDisplay();
 	});
+	btnCancelEdit.addEventListener('click', function(){
+		projectList[projectIndex].todosArray.push(memory.pop())
+		render();
+		cleanTodoDisplay();
+	})
 }
 
 //Limpia TodoDisplay al pulsar Edit
@@ -363,8 +386,8 @@ function render() {
 							"font-bold",
 							"py-2",
 							"px-4",
-							"rounded",
-							"m-4"
+							"rounded"
+							
 						);
 						let btnEditTodo = document.createElement("button");
 						btnEditTodo.setAttribute("id", "btnEditTodo");
@@ -376,8 +399,8 @@ function render() {
 							"font-bold",
 							"py-2",
 							"px-4",
-							"rounded",
-							"m-4"
+							"rounded"
+							
 						);
 						let btnDeleteTodo = document.createElement("button");
 						btnDeleteTodo.setAttribute("id", "btnDeleteTodo");
@@ -389,8 +412,8 @@ function render() {
 							"font-bold",
 							"py-2",
 							"px-4",
-							"rounded",
-							"m-4"
+							"rounded"
+					
 						);
 						let showTitle = document.createElement("h3");
 						showTitle.setAttribute("id", "editTitle");
