@@ -254,7 +254,13 @@ function editDate() {
 //Falta el predeterminado en editar prioridad
 function editPriority() {
 	const selectPriority = document.createElement("select");
+	let memory;
+	if(document.querySelector("#editPriority").textContent.slice(10) === "Low") memory = 2
+	else if(document.querySelector("#editPriority").textContent.slice(10) === "High") memory = 0
+	else memory = 1;
 	selectPriority.setAttribute("id", "domEditPriority");
+	//console.log(document.querySelector("#editPriority").textContent.slice(10))
+	selectPriority.setAttribute("selectedIndex", memory) ;
 	todoDisplay.appendChild(selectPriority);
 	priorityArray = ["High", "Normal", "Low"];
 	for (item of priorityArray) {
@@ -269,6 +275,7 @@ function editTodoBtnOk() {
 		btnTodoDisplay.removeChild(btnTodoDisplay.firstChild);
 	}
 	var memory = [];
+	var memoryIndex = 0;
 	const btnOk = document.createElement("button");
 	btnOk.classList.add(
 		"bg-blue-500",
@@ -311,7 +318,8 @@ function editTodoBtnOk() {
 			console.log(projectIndex);
 			//console.log(projectList[projectIndex].todosArray[j]);
 			memory.push(projectList[projectIndex].todosArray[j]);
-			console.log(memory);
+			memoryIndex = j;
+			console.log(memoryIndex);
 			projectList[projectIndex].todosArray.splice(j, 1);
 		}
 	}
@@ -329,7 +337,7 @@ function editTodoBtnOk() {
 		cleanTodoDisplay();
 	});
 	btnCancelEdit.addEventListener('click', function(){
-		projectList[projectIndex].todosArray.push(memory.pop())
+		projectList[projectIndex].todosArray.splice(memoryIndex, 0, memory.pop())
 		render();
 		cleanTodoDisplay();
 	})
@@ -358,18 +366,21 @@ function cleanContent() {
 function render() {
 	cleanContent();
 	for (i = 0; i < projectList.length; i++) {
-		const h2 = document.createElement("h2");
-		h2.textContent = projectList[i].name;
-		h2.classList.add("text-xl", "font-bold");
-		content.appendChild(h2);
+		const ul = document.createElement("ul");
+		ul.textContent = projectList[i].name;
+		ul.classList.add("text-xl", "p-4", "font-bold", "border", "border-black", "w-64", "text-center");
+		content.appendChild(ul);
 		for (todos of projectList[i].todosArray) {
-			const div = document.createElement("div");
-			div.classList.add("todo");
+			const li = document.createElement("li");
+			li.classList.add("todo", "text-base", "font-medium", "text-left");
 			console.log(todos.status);
-			if (todos.status === true) div.classList.add("line-through");
-			div.setAttribute("data-project", i);
-			div.textContent = todos.title;
-			div.addEventListener("click", function (e) {
+			if (todos.status === true) li.classList.add("line-through");
+			if(todos.priority === 'High') li.classList.add("text-red-600")
+			else if(todos.priority === 'Low') li.classList.add("text-green-600")
+			else li.classList.add("text-yellow-600");
+			li.setAttribute("data-project", i);
+			li.textContent = todos.title;
+			li.addEventListener("click", function (e) {
 				let searchTitle = e.target.textContent;
 				let projectIndex = e.target.getAttribute("data-project");
 				for (let todos of projectList[projectIndex].todosArray) {
@@ -447,7 +458,7 @@ function render() {
 					}
 				}
 			});
-			content.appendChild(div);
+			ul.appendChild(li);
 		}
 	}
 }
